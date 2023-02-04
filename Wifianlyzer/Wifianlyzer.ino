@@ -71,7 +71,6 @@ void setup() {
   tft.setTextSize(2);
   tft.println("v0.5.de");
   delay(3000);
-  tft.fillScreen(TFT_BLACK);
   // Set WiFi to station mode and disconnect from an AP if it was previously connected
   WiFi.mode(WIFI_STA);
   WiFi.disconnect();
@@ -81,6 +80,7 @@ void setup() {
 }
 
 void loop() {
+  tft.fillScreen(TFT_BLACK);
   tft.setCursor(0, 0);
   tft.setTextColor(TFT_WHITE);
   tft.setTextSize(1);
