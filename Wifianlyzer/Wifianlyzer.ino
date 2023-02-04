@@ -56,22 +56,22 @@ uint8_t scan_count = 0;
 void setup() {
   tft.init(240, 320);
   tft.setRotation(3);
-  tft.fillScreen(ST77XX_BLACK);
+  tft.fillScreen(TFT_BLACK);
   tft.setTextWrap(false);
   tft.setCursor(90, 90);
-  tft.setTextColor(ST77XX_WHITE);
+  tft.setTextColor(TFT_WHITE);
   tft.setTextSize(1);
   tft.println("phittinan@");
   tft.setCursor(90, 60);
-  tft.setTextColor(ST77XX_WHITE);
+  tft.setTextColor(TFT_WHITE);
   tft.setTextSize(3);
   tft.println("Wireless");
   tft.setCursor(135, 110);
-  tft.setTextColor(ST77XX_WHITE);
+  tft.setTextColor(TFT_WHITE);
   tft.setTextSize(2);
   tft.println("v0.5.de");
   delay(3000);
-  tft.fillScreen(ST77XX_BLACK);
+  tft.fillScreen(TFT_BLACK);
   // Set WiFi to station mode and disconnect from an AP if it was previously connected
   WiFi.mode(WIFI_STA);
   WiFi.disconnect();
@@ -81,6 +81,10 @@ void setup() {
 }
 
 void loop() {
+  tft.setCursor(0, 0);
+  tft.setTextColor(TFT_WHITE);
+  tft.setTextSize(1);
+  tft.println("Scanning");
   // code to draw on the display here
   uint8_t ap_count[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
   int32_t max_rssi[] = {-100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100};
@@ -91,7 +95,7 @@ void loop() {
   tft.fillRect(0, BANNER_HEIGHT, 320, 224, TFT_BLACK);
   tft.setTextSize(1);
   if (n == 0) {
-    tft.setTextColor(TFT_BLACK);
+    tft.setTextColor(TFT_WHITE);
     tft.setCursor(0, BANNER_HEIGHT);
     tft.println("no networks found");
   } else {
