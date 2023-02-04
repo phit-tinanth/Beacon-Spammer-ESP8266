@@ -4,7 +4,7 @@ extern "C" {
   #include "user_interface.h"
 }
 
-String ssid = "1234567890qwertyuiopasdfghjkklzxcvbnm QWERTYUIOPASDFGHJKLZXCVBNM_";
+String ssid = "                                                               _";
 byte channel;
 
 uint8_t packet[128] = { 0x80, 0x00, 0x00, 0x00, 0xff, 0xff,
@@ -23,8 +23,6 @@ void setup() {
   wifi_set_opmode(STATION_MODE);
   wifi_promiscuous_enable(1); 
 }
-
-
 
 void loop() { 
     int channels[] = {8, 9, 10, 11, 12};
@@ -54,34 +52,14 @@ void loop() {
     packet[50] = ssid[random(65)];
     packet[51] = ssid[random(65)];
     
-    packet[56] = channel;
     packet[57] = channel;
-    packet[58] = channel;
-    packet[59] = channel;
-    packet[60] = channel;
-    packet[61] = channel;
-    packet[62] = channel;
-    packet[63] = channel;
-    packet[64] = channel;
-    packet[65] = channel;
-    packet[66] = channel;
-    packet[67] = channel;
-    packet[68] = channel;
-    packet[69] = channel;
     
-    wifi_send_pkt_freedom(packet, 56, 0);
-    wifi_send_pkt_freedom(packet, 57, 0);
-    wifi_send_pkt_freedom(packet, 58, 0);
-    wifi_send_pkt_freedom(packet, 59, 0);
     wifi_send_pkt_freedom(packet, 60, 0);
-    wifi_send_pkt_freedom(packet, 61, 0);
-    wifi_send_pkt_freedom(packet, 62, 0);
-    wifi_send_pkt_freedom(packet, 63, 0);
-    wifi_send_pkt_freedom(packet, 64, 0);
-    wifi_send_pkt_freedom(packet, 65, 0);
-    wifi_send_pkt_freedom(packet, 66, 0);
-    wifi_send_pkt_freedom(packet, 67, 0);
-    wifi_send_pkt_freedom(packet, 68, 0);
-    wifi_send_pkt_freedom(packet, 69, 0);
+    wifi_send_pkt_freedom(packet, 60, 0);
+    wifi_send_pkt_freedom(packet, 60, 0);
+    wifi_send_pkt_freedom(packet, 60, 0);
+    wifi_send_pkt_freedom(packet, 60, 0);
+    wifi_send_pkt_freedom(packet, 60, 0);
+
     delay(1);
 }
