@@ -80,11 +80,11 @@ void setup() {
 }
 
 void loop() {
-  tft.fillScreen(TFT_BLACK);
   tft.setCursor(0, 0);
   tft.setTextColor(TFT_WHITE);
   tft.setTextSize(1);
   tft.println("Scanning");
+  tft.fillScreen(TFT_BLACK);
   // code to draw on the display here
   uint8_t ap_count[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
   int32_t max_rssi[] = {-100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100};
