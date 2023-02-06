@@ -139,10 +139,14 @@ void draw_menu() {
       tft.print(')');
     }
   }
-  if (digitalRead(SELECT_BUTTON_PIN) == LOW) {
+    if (digitalRead(SELECT_BUTTON_PIN) == LOW) {
       delay(200);
       draw_menu_active = false;
       function1();
+    }
+    if (digitalRead(HOME_BUTTON_PIN) == LOW) {
+      delay(200);
+      draw_menu();
     }
   }
 }
@@ -151,7 +155,7 @@ void function1_details() {
     if (selected_network >= 0) {
         tft.fillScreen(TFT_BLACK);
         tft.setCursor(0, 0);
-        tft.setTextSize(1);
+        tft.setTextSize(2);
         tft.setTextColor(TFT_WHITE);
         tft.println("Network:");
         tft.println(WiFi.SSID(selected_network));
@@ -161,7 +165,7 @@ void function1_details() {
     } else {
         tft.fillScreen(TFT_BLACK);
         tft.setCursor(0, 0);
-        tft.setTextSize(1);
+        tft.setTextSize(2);
         tft.setTextColor(TFT_WHITE);
         tft.println("No network selected");
         delay(1000);
@@ -176,19 +180,12 @@ void function1_details() {
 
 void function1() {
     function1_active = true;
-    tft.fillScreen(TFT_BLACK);
-    delay(10);
-    tft.setCursor(0, 0);
-    tft.setTextSize(1);
-    tft.setTextColor(TFT_WHITE);
-    tft.setTextWrap(false);
-    tft.print("Scanning...");
     int n = WiFi.scanNetworks();
     delay(100);
     tft.fillScreen(TFT_BLACK);
     if (n == 0) {
     } else {
-        tft.setTextSize(1);
+        tft.setTextSize(2);
         tft.setCursor(0, 0);
         for (int i = 0; i < n; i++) {
             if (i == selected_network) {
@@ -208,7 +205,7 @@ void function1() {
             }
             if (n == 0) {
             } else {
-            tft.setTextSize(1);
+            tft.setTextSize(2);
             tft.setCursor(0, 0);
             for (int i = 0; i < n; i++) {
             if (i == selected_network) {
@@ -228,7 +225,7 @@ void function1() {
             }
             if (n == 0) {
             } else {
-            tft.setTextSize(1);
+            tft.setTextSize(2);
             tft.setCursor(0, 0);
             for (int i = 0; i < n; i++) {
             if (i == selected_network) {
