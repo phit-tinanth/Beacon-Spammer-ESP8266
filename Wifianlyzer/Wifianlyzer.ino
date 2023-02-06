@@ -17,6 +17,10 @@
 #define TFT_DC    2
 #define TFT_MOSI 19
 #define TFT_SCLK 12
+#define UP_BUTTON_PIN 4
+#define DOWN_BUTTON_PIN 5
+#define SELECT_BUTTON_PIN 23
+#define HOME_BUTTON_PIN 22
 
 Adafruit_ST7789 tft = Adafruit_ST7789(TFT_CS, TFT_DC, TFT_MOSI, TFT_SCLK, TFT_RST);
 
@@ -53,33 +57,12 @@ uint16_t channel_color[] = {
 
 uint8_t scan_count = 0;
 
-void setup() {
-  tft.init(240, 320);
-  tft.setRotation(3);
-  tft.fillScreen(TFT_BLACK);
-  tft.setTextWrap(false);
-  tft.setCursor(90, 90);
-  tft.setTextColor(TFT_WHITE);
-  tft.setTextSize(1);
-  tft.println("phittinan@");
-  tft.setCursor(90, 60);
-  tft.setTextColor(TFT_WHITE);
-  tft.setTextSize(3);
-  tft.println("Wireless");
-  tft.setCursor(135, 110);
-  tft.setTextColor(TFT_WHITE);
-  tft.setTextSize(2);
-  tft.println("v0.5.de");
-  delay(3000);
-  // Set WiFi to station mode and disconnect from an AP if it was previously connected
-  WiFi.mode(WIFI_STA);
-  WiFi.disconnect();
+int selected_network = 0;
+bool function1_active = false;
+bool draw_menu_active = false;
 
-  // rest for WiFi routine?
-  delay(100);
-}
-
-void loop() {
+void draw_menu() {
+  draw_menu_active = true;
   // code to draw on the display here
   uint8_t ap_count[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
   int32_t max_rssi[] = {-100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100};
@@ -122,11 +105,12 @@ void loop() {
       delay(10);
     }
   }
+  while(draw_menu_active) {
   // print WiFi stat
   tft.setTextColor(TFT_WHITE);
   tft.setCursor(0, BANNER_HEIGHT);
   tft.print(n);
-  tft.print(" networks found, suggested channels: ");
+  tft.print(" networks channels: ");
   bool listed_first_channel = false;
   for (int i = 1; i <= 11; i++) { // channels 12-14 may not available
     if ((i == 1) || (max_rssi[i - 2] < NEAR_CHANNEL_RSSI_ALLOW)) { // check previous channel signal strengh
@@ -155,6 +139,153 @@ void loop() {
       tft.print(')');
     }
   }
-  // Wait a bit before scanning again
-  delay(5000);
+  if (digitalRead(SELECT_BUTTON_PIN) == LOW) {
+      delay(200);
+      draw_menu_active = false;
+      function1();
+    }
+  }
+}
+
+void function1_details() {
+    if (selected_network >= 0) {
+        tft.fillScreen(TFT_BLACK);
+        tft.setCursor(0, 0);
+        tft.setTextSize(1);
+        tft.setTextColor(TFT_WHITE);
+        tft.println("Network:");
+        tft.println(WiFi.SSID(selected_network));
+        tft.println("BSSID: " + WiFi.BSSIDstr(selected_network));
+        tft.println("Signal: " + String(WiFi.RSSI(selected_network)) + " dBm");
+        tft.println("Channel: " + String(WiFi.channel(selected_network)));
+    } else {
+        tft.fillScreen(TFT_BLACK);
+        tft.setCursor(0, 0);
+        tft.setTextSize(1);
+        tft.setTextColor(TFT_WHITE);
+        tft.println("No network selected");
+        delay(1000);
+    }
+    while(function1_active) {
+        if (digitalRead(HOME_BUTTON_PIN) == LOW) {
+            delay(200);
+            function1();
+        }
+    }
+}
+
+void function1() {
+    function1_active = true;
+    tft.fillScreen(TFT_BLACK);
+    delay(10);
+    tft.setCursor(0, 0);
+    tft.setTextSize(1);
+    tft.setTextColor(TFT_WHITE);
+    tft.setTextWrap(false);
+    tft.print("Scanning...");
+    int n = WiFi.scanNetworks();
+    delay(100);
+    tft.fillScreen(TFT_BLACK);
+    if (n == 0) {
+    } else {
+        tft.setTextSize(1);
+        tft.setCursor(0, 0);
+        for (int i = 0; i < n; i++) {
+            if (i == selected_network) {
+                tft.setTextColor(TFT_BLUE);
+            } else {
+                tft.setTextColor(TFT_WHITE);
+            }
+            tft.print(i + 1);
+            tft.print(": ");
+            tft.println(WiFi.SSID(i));
+        }
+    }
+    while(function1_active) {
+        if (digitalRead(UP_BUTTON_PIN) == LOW) {
+            if (selected_network > 0) {
+                selected_network--;
+            }
+            if (n == 0) {
+            } else {
+            tft.setTextSize(1);
+            tft.setCursor(0, 0);
+            for (int i = 0; i < n; i++) {
+            if (i == selected_network) {
+                tft.setTextColor(TFT_BLUE);
+            } else {
+                tft.setTextColor(TFT_WHITE);
+            }
+            tft.print(i + 1);
+            tft.print(": ");
+            tft.println(WiFi.SSID(i));
+            }
+          }
+        }
+        if (digitalRead(DOWN_BUTTON_PIN) == LOW) {
+            if (selected_network < n - 1) {
+                selected_network++;
+            }
+            if (n == 0) {
+            } else {
+            tft.setTextSize(1);
+            tft.setCursor(0, 0);
+            for (int i = 0; i < n; i++) {
+            if (i == selected_network) {
+                tft.setTextColor(TFT_BLUE);
+            } else {
+                tft.setTextColor(TFT_WHITE);
+            }
+            tft.print(i + 1);
+            tft.print(": ");
+            tft.println(WiFi.SSID(i));
+            }
+          }
+        }
+        if (digitalRead(HOME_BUTTON_PIN) == LOW) {
+            delay(200);
+            function1_active = false;
+            tft.fillScreen(TFT_BLACK);
+            draw_menu();
+        }
+        if (digitalRead(SELECT_BUTTON_PIN) == LOW) {
+            delay(200);
+            function1_details();
+    }
+  }
+}
+
+void setup() {
+  pinMode(UP_BUTTON_PIN, INPUT_PULLUP);
+  pinMode(DOWN_BUTTON_PIN, INPUT_PULLUP);
+  pinMode(SELECT_BUTTON_PIN, INPUT_PULLUP);
+  pinMode(HOME_BUTTON_PIN, INPUT_PULLUP);
+  tft.init(240, 320);
+  tft.setRotation(3);
+  tft.fillScreen(TFT_BLACK);
+  tft.setTextWrap(false);
+  tft.setCursor(90, 90);
+  tft.setTextColor(TFT_WHITE);
+  tft.setTextSize(1);
+  tft.println("phittinan@");
+  tft.setCursor(40, 60);
+  tft.setTextColor(TFT_WHITE);
+  tft.setTextSize(3);
+  tft.println("WiFi-Analyzer");
+  tft.setCursor(135, 110);
+  tft.setTextColor(TFT_WHITE);
+  tft.setTextSize(2);
+  tft.println("v0.7.eq");
+  delay(1000);
+  // Set WiFi to station mode and disconnect from an AP if it was previously connected
+  WiFi.mode(WIFI_STA);
+  WiFi.disconnect();
+
+  // rest for WiFi routine?
+  delay(100);
+  draw_menu();
+}
+
+void loop() {
+  
 }
